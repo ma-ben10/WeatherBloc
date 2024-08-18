@@ -1,6 +1,7 @@
 # weatherbloc
 
-A new Flutter project.
+## Description
+simple weather app for practicing the BLOC state management and architecture
 
 ## Getting Started
 

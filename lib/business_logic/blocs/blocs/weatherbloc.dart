@@ -26,9 +26,7 @@ class Weatherbloc extends Bloc<WeatherEvent, Weatherstate> {
             await watherrepository.getWeatherFromLocation();
         emit(WeatherLoaded(weather: weathero));
       } catch (e) {
-        emit(WeatherError(
-            errorMessage:
-                "failed please verify your phone location is enabled"));
+        emit(WeatherError(errorMessage: "$e"));
       }
     });
 
@@ -48,7 +46,7 @@ class Weatherbloc extends Bloc<WeatherEvent, Weatherstate> {
             await watherrepository.getWeatherFromCity(event.cityname);
         emit(WeatherLoaded(weather: weathero));
       } catch (e) {
-        emit(WeatherError(errorMessage: "please enter a correct city name "));
+        emit(WeatherError(errorMessage: "$e"));
 
         /// Failed in fetching weather info Maybe ${event.cityname} doesn't exist
       }

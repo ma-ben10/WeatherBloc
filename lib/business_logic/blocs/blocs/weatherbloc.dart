@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:weatherbloc/business_logic/blocs/events/weatherEvent.dart';
 import 'package:weatherbloc/business_logic/blocs/states/weatherState.dart';
+import 'package:weatherbloc/data/data_providers/internetApi.dart';
 import 'package:weatherbloc/data/models/weather.dart';
 import 'package:weatherbloc/data/repositories/watherRepository.dart';
 
@@ -26,7 +27,9 @@ class Weatherbloc extends Bloc<WeatherEvent, Weatherstate> {
             await watherrepository.getWeatherFromLocation();
         emit(WeatherLoaded(weather: weathero));
       } catch (e) {
-        emit(WeatherError(errorMessage: "$e"));
+        emit(WeatherError(
+            errorMessage:
+                "please verify ur connection and location are enabled"));
       }
     });
 
@@ -46,7 +49,7 @@ class Weatherbloc extends Bloc<WeatherEvent, Weatherstate> {
             await watherrepository.getWeatherFromCity(event.cityname);
         emit(WeatherLoaded(weather: weathero));
       } catch (e) {
-        emit(WeatherError(errorMessage: "$e"));
+        emit(WeatherError(errorMessage: "Failed to get weather "));
 
         /// Failed in fetching weather info Maybe ${event.cityname} doesn't exist
       }

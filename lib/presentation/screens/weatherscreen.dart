@@ -1,9 +1,11 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:weatherbloc/business_logic/blocs/blocs/weatherbloc.dart';
 import 'package:weatherbloc/business_logic/blocs/events/weatherEvent.dart';
 import 'package:weatherbloc/business_logic/blocs/states/weatherState.dart';
+import 'package:weatherbloc/data/data_providers/internetApi.dart';
 
 class weatherScreen extends StatefulWidget {
   const weatherScreen({super.key});
@@ -17,6 +19,7 @@ class _weatherScreenState extends State<weatherScreen> {
 
   Widget build(BuildContext context) {
     final weatherbloc = BlocProvider.of<Weatherbloc>(context);
+    InternetApi internetApi = InternetApi();
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -26,6 +29,29 @@ class _weatherScreenState extends State<weatherScreen> {
               padding: EdgeInsets.symmetric(
                   horizontal: MediaQuery.of(context).size.width * 0.1),
               child: ListView(children: [
+                StreamBuilder<List<ConnectivityResult>>(
+                    stream: internetApi.checkConnectivity(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return CircularProgressIndicator(
+                          color: Colors.black,
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text("${snapshot.error}");
+                      } else if (snapshot.hasData) {
+                        print(snapshot.data);
+                        final connection = snapshot.data;
+                        if (connection!.contains(ConnectivityResult.wifi) ||
+                            connection!.contains(ConnectivityResult.mobile)) {
+                          return const Icon(Icons.wifi);
+                        } else if (connection!
+                            .contains(ConnectivityResult.none)) {
+                          return Icon(Icons.wifi_off);
+                        }
+                      }
+
+                      return Icon(Icons.wifi_off);
+                    }),
                 BlocConsumer<Weatherbloc, Weatherstate>(
                   listener: (context, state) {
                     if (state is WeatherError) {
